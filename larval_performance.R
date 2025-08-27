@@ -200,3 +200,37 @@ summary(fwl_monarchs)
 larval_days_monarchs <- lmer(larval_days ~ hostplant + sex + (1 | family), data = monarch_data)
 summary(larval_days_monarchs)
 
+#########################################################################
+#New code with each species and measurement separate
+
+data_fwl <- read.csv("J:\\NATALIE\\R\\fwl.csv")
+
+#fwl
+data_summary_fwl <- function(data, varname = "fwl", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_fwl, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_fwl <- data_summary_fwl(data, varname ="fwl", 
+                           groupnames = c("hostplant", "butterfly_spp"))
+
+#plot fwl
+p1 <- ggplot(df_fwl, aes(x=hostplant, y=fwl, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=fwl-sd, ymax=fwl+sd), width=.2,
+                position=position_dodge(.9))
+
+df_fwl %>%
+  filter(butterfly_spp == "queen") %>%
+  ggplot(df_fwl, aes(x=hostplant, y=fwl)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=fwl-sd, ymax=fwl+sd), width=.2,
+                position=position_dodge(.9))
+
