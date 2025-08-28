@@ -203,34 +203,224 @@ summary(larval_days_monarchs)
 #########################################################################
 #New code with each species and measurement separate
 
-data_fwl <- read.csv("J:\\NATALIE\\R\\fwl.csv")
+###fwl queens###
+data_fwl_queens <- read.csv("J:\\NATALIE\\R\\fwl_queens.csv")
 
-#fwl
-data_summary_fwl <- function(data, varname = "fwl", groupnames = c("hostplant", "butterfly_spp")){
+data_summary_fwl_queens <- function(data, varname = "fwl", groupnames = c("hostplant", "butterfly_spp")){
   require(plyr)
   summary_func <- function(x, col){
     c(mean = mean(x[[col]], na.rm=TRUE),
       sd = sd(x[[col]], na.rm=TRUE))
   }
-  data_sum<-ddply(data_fwl, groupnames, .fun=summary_func,
+  data_sum<-ddply(data_fwl_queens, groupnames, .fun=summary_func,
                   varname)
   data_sum <- rename(data_sum, c("mean" = varname))
   return(data_sum)
 }
 
-df_fwl <- data_summary_fwl(data, varname ="fwl", 
+df_fwl_queens <- data_summary_fwl_queens(data, varname ="fwl", 
                            groupnames = c("hostplant", "butterfly_spp"))
 
-#plot fwl
-p1 <- ggplot(df_fwl, aes(x=hostplant, y=fwl, fill=butterfly_spp)) + 
+#plot fwl queens
+p1 <- ggplot(df_fwl_queens, aes(x=hostplant, y=fwl, fill=butterfly_spp)) + 
   geom_bar(stat="identity", position=position_dodge()) +
   geom_errorbar(aes(ymin=fwl-sd, ymax=fwl+sd), width=.2,
                 position=position_dodge(.9))
 
-df_fwl %>%
-  filter(butterfly_spp == "queen") %>%
-  ggplot(df_fwl, aes(x=hostplant, y=fwl)) + 
+###fwl monarchs###
+data_fwl_monarchs <- read.csv("J:\\NATALIE\\R\\fwl.csv")
+
+data_summary_fwl_monarchs <- function(data, varname = "fwl", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_fwl_monarchs, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_fwl_monarchs <- data_summary_fwl_monarchs(data, varname ="fwl", 
+                                         groupnames = c("hostplant", "butterfly_spp"))
+
+#plot fwl monarchs
+p2 <- ggplot(df_fwl_monarchs, aes(x=hostplant, y=fwl, fill=butterfly_spp)) + 
   geom_bar(stat="identity", position=position_dodge()) +
   geom_errorbar(aes(ymin=fwl-sd, ymax=fwl+sd), width=.2,
                 position=position_dodge(.9))
+
+###day 10 mass queens###
+data_day10_queens <- read.csv("J:\\NATALIE\\R\\day10_mass-queens.csv")
+
+data_summary_day10_queens <- function(data, varname = "day10", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_day10_queens, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_day10_queens <- data_summary_day10_queens(data, varname ="day10_mass", 
+                                         groupnames = c("hostplant", "butterfly_spp"))
+
+#plot day10 mass queens
+p3 <- ggplot(df_day10_queens, aes(x=hostplant, y=day10_mass, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=day10_mass-sd, ymax=day10_mass+sd), width=.2,
+                position=position_dodge(.9))
+
+###day 10 mass monarchs###
+data_day10_monarchs <- read.csv("J:\\NATALIE\\R\\day10_mass.csv")
+
+data_summary_day10_monarchs <- function(data, varname = "day10", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_day10_monarchs, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_day10_monarchs <- data_summary_day10_monarchs(data, varname ="day10_mass", 
+                                             groupnames = c("hostplant", "butterfly_spp"))
+
+#plot day10 mass monarchs
+p4 <- ggplot(df_day10_monarchs, aes(x=hostplant, y=day10_mass, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=day10_mass-sd, ymax=day10_mass+sd), width=.2,
+                position=position_dodge(.9))
+
+###pupal days queens###
+
+data_pupal_days_queens <- read.csv("J:\\NATALIE\\R\\pupal_days-queens.csv")
+
+data_summary_pupal_days_queens <- function(data, varname = "pupal_days", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_pupal_days_queens, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_pupal_days_queens <- data_summary_pupal_days_queens(data, varname ="pupal_days", 
+                                                           groupnames = c("hostplant", "butterfly_spp"))
+#plot pupal days
+
+p5 <- ggplot(df_pupal_days_queens, aes(x=hostplant, y=pupal_days, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=pupal_days-sd, ymax=pupal_days+sd), width=.2,
+                position=position_dodge(.9))
+
+###pupal days monarchs###
+data_pupal_days_monarchs <- read.csv("J:\\NATALIE\\R\\pupal_days.csv")
+
+data_summary_pupal_days_monarchs <- function(data, varname = "pupal_days", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_pupal_days_monarchs, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_pupal_days_monarchs <- data_summary_pupal_days_monarchs(data, varname ="pupal_days", 
+                                                 groupnames = c("hostplant", "butterfly_spp"))
+
+#plot pupal days monarchs
+
+p6 <- ggplot(df_pupal_days_monarchs, aes(x=hostplant, y=pupal_days, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=pupal_days-sd, ymax=pupal_days+sd), width=.2,
+                position=position_dodge(.9))
+
+###pupal mass queens###
+data_pupal_mass_queens <- read.csv("J:\\NATALIE\\R\\pupal_mass-queens.csv")
+
+data_summary_pupal_mass_queens <- function(data, varname = "pupal_mass", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_pupal_mass_queens, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_pupal_mass_queens <- data_summary_pupal_mass_queens(data, varname ="pupal_mass", 
+                                             groupnames = c("hostplant", "butterfly_spp"))
+
+#plot pupal mass queens
+p7 <- ggplot(df_pupal_mass_queens, aes(x=hostplant, y=pupal_mass, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=pupal_mass-sd, ymax=pupal_mass+sd), width=.2,
+                position=position_dodge(.9))
+
+###pupal mass monarchs###
+data_pupal_mass_monarchs <- read.csv("J:\\NATALIE\\R\\pupal_mass.csv")
+
+data_summary_pupal_mass_monarchs <- function(data, varname = "pupal_mass", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_pupal_mass_monarchs, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_pupal_mass_monarchs <- data_summary_pupal_mass_monarchs(data, varname ="pupal_mass", 
+                                                       groupnames = c("hostplant", "butterfly_spp"))
+
+#plot pupal mass monarchs
+p8 <- ggplot(df_pupal_mass_monarchs, aes(x=hostplant, y=pupal_mass, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=pupal_mass-sd, ymax=pupal_mass+sd), width=.2,
+                position=position_dodge(.9))
+
+###sex queens###
+data_sex_queens <- read.csv("J:\\NATALIE\\R\\sex-queens.csv")
+
+data_summary_sex_queens <- function(data, varname = "sex", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_sex_queens, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_sex_queens <- data_summary_sex_queens(data, varname ="sex", groupnames = c("hostplant", "butterfly_spp"))
+
+#plot sex queens
+p9 <- ggplot(df_sex_queens, aes(x=hostplant, y=sex, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=sex-sd, ymax=sex+sd), width=.2,
+                position=position_dodge(.9))
+
+##DUH, fix sex
+
+
 
