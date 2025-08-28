@@ -397,6 +397,56 @@ p8 <- ggplot(df_pupal_mass_monarchs, aes(x=hostplant, y=pupal_mass, fill=butterf
   geom_errorbar(aes(ymin=pupal_mass-sd, ymax=pupal_mass+sd), width=.2,
                 position=position_dodge(.9))
 
+
+###larval days queens###
+data_larval_days_queens <- read.csv("J:\\NATALIE\\R\\laval_days-queens.csv")
+
+data_summary_larval_days_queens <- function(data, varname = "larval_days", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_larval_days_queens, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_larval_days_queens <- data_summary_larval_days_queens(data, varname ="larval_days", 
+                                                       groupnames = c("hostplant", "butterfly_spp"))
+
+#plot larval days queens
+p9 <- ggplot(df_larval_days_queens, aes(x=hostplant, y=larval_days, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=larval_days-sd, ymax=larval_days+sd), width=.2,
+                position=position_dodge(.9))
+
+###larval days monarchs###
+data_larval_days_monarchs <- read.csv("J:\\NATALIE\\R\\larval_days.csv")
+
+data_summary_larval_days_monarchs <- function(data, varname = "larval_days", groupnames = c("hostplant", "butterfly_spp")){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data_larval_days_monarchs, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+  return(data_sum)
+}
+
+df_larval_days_monarchs <- data_summary_larval_days_monarchs(data, varname ="larval_days", 
+                                                         groupnames = c("hostplant", "butterfly_spp"))
+
+#plot larval days queens
+p10 <- ggplot(df_larval_days_monarchs, aes(x=hostplant, y=larval_days, fill=butterfly_spp)) + 
+  geom_bar(stat="identity", position=position_dodge()) +
+  geom_errorbar(aes(ymin=larval_days-sd, ymax=larval_days+sd), width=.2,
+                position=position_dodge(.9))
+
+
 ###sex queens###
 data_sex_queens <- read.csv("J:\\NATALIE\\R\\sex-queens.csv")
 
