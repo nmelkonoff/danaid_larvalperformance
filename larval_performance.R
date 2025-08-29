@@ -223,7 +223,7 @@ df_fwl_queens <- data_summary_fwl_queens(data, varname ="fwl",
 
 #plot fwl queens
 p1 <- ggplot(df_fwl_queens, aes(x=hostplant, y=fwl, fill=butterfly_spp)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
+  geom_bar(stat="identity", position=position_dodge(), fill = "purple") +
   geom_errorbar(aes(ymin=fwl-sd, ymax=fwl+sd), width=.2,
                 position=position_dodge(.9))
 
@@ -320,7 +320,7 @@ df_pupal_days_queens <- data_summary_pupal_days_queens(data, varname ="pupal_day
 #plot pupal days
 
 p5 <- ggplot(df_pupal_days_queens, aes(x=hostplant, y=pupal_days, fill=butterfly_spp)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
+  geom_bar(stat="identity", position=position_dodge(), fill = "purple") +
   geom_errorbar(aes(ymin=pupal_days-sd, ymax=pupal_days+sd), width=.2,
                 position=position_dodge(.9))
 
@@ -369,7 +369,7 @@ df_pupal_mass_queens <- data_summary_pupal_mass_queens(data, varname ="pupal_mas
 
 #plot pupal mass queens
 p7 <- ggplot(df_pupal_mass_queens, aes(x=hostplant, y=pupal_mass, fill=butterfly_spp)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
+  geom_bar(stat="identity", position=position_dodge(), fill = "purple") +
   geom_errorbar(aes(ymin=pupal_mass-sd, ymax=pupal_mass+sd), width=.2,
                 position=position_dodge(.9))
 
@@ -418,7 +418,7 @@ df_larval_days_queens <- data_summary_larval_days_queens(data, varname ="larval_
 
 #plot larval days queens
 p9 <- ggplot(df_larval_days_queens, aes(x=hostplant, y=larval_days, fill=butterfly_spp)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
+  geom_bar(stat="identity", position=position_dodge(), fill = "purple") +
   geom_errorbar(aes(ymin=larval_days-sd, ymax=larval_days+sd), width=.2,
                 position=position_dodge(.9))
 
@@ -440,37 +440,48 @@ data_summary_larval_days_monarchs <- function(data, varname = "larval_days", gro
 df_larval_days_monarchs <- data_summary_larval_days_monarchs(data, varname ="larval_days", 
                                                          groupnames = c("hostplant", "butterfly_spp"))
 
-#plot larval days queens
+#plot larval days monarchs
 p10 <- ggplot(df_larval_days_monarchs, aes(x=hostplant, y=larval_days, fill=butterfly_spp)) + 
   geom_bar(stat="identity", position=position_dodge()) +
   geom_errorbar(aes(ymin=larval_days-sd, ymax=larval_days+sd), width=.2,
                 position=position_dodge(.9))
 
-
 ###sex queens###
 data_sex_queens <- read.csv("J:\\NATALIE\\R\\sex-queens.csv")
 
-data_summary_sex_queens <- function(data, varname = "sex", groupnames = c("hostplant", "butterfly_spp")){
-  require(plyr)
-  summary_func <- function(x, col){
-    c(mean = mean(x[[col]], na.rm=TRUE),
-      sd = sd(x[[col]], na.rm=TRUE))
-  }
-  data_sum<-ddply(data_sex_queens, groupnames, .fun=summary_func,
-                  varname)
-  data_sum <- rename(data_sum, c("mean" = varname))
-  return(data_sum)
-}
+df_sex_queens <- data.frame(data_sex_queens)
 
-df_sex_queens <- data_summary_sex_queens(data, varname ="sex", groupnames = c("hostplant", "butterfly_spp"))
+df_sex_queens %>%
+  dplyr::count(hostplant, sex) %>%
+  ggplot(aes(hostplant, n)) +
+  geom_col(aes(fill = sex), position = "fill")
 
-#plot sex queens
-p9 <- ggplot(df_sex_queens, aes(x=hostplant, y=sex, fill=butterfly_spp)) + 
-  geom_bar(stat="identity", position=position_dodge()) +
-  geom_errorbar(aes(ymin=sex-sd, ymax=sex+sd), width=.2,
-                position=position_dodge(.9))
+###sex monarchs###
+data_sex_monarchs <- read.csv("J:\\NATALIE\\R\\sex.csv")
 
-##DUH, fix sex
+df_sex_monarchs <- data.frame(data_sex_monarchs)
+
+df_sex_monarchs %>%
+  dplyr::count(hostplant, sex) %>%
+  ggplot(aes(hostplant, n)) +
+  geom_col(aes(fill = sex), position = "fill")
+
+
+###survival###
+data_surv <- read.csv("J:\\NATALIE\\R\\survival_both.csv")
+
+df_survival <- data.frame(data_surv)
+
+#convert to character
+# df_survival <- df_survival %>%
+#   mutate(survival = case_when(data_surv$died == 0 ~ "alive",
+#                               data_surv$died == 1 ~ "dead"))
+
+p_survival <- ggplot(df_survival, aes(x = hostplant, y = died, fill = butterfly_spp, group = butterfly_spp)) +
+  geom_bar(stat ="summary", fun.y = "mean", position = "dodge", color = "black") +
+  theme_bw()
+
+
 
 
 
