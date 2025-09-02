@@ -200,6 +200,25 @@ summary(fwl_monarchs)
 larval_days_monarchs <- lmer(larval_days ~ hostplant + sex + (1 | family), data = monarch_data)
 summary(larval_days_monarchs)
 
+###z-scores###
+#function to calculate z score
+calculate_z <- function(X, X_mean, S){
+  return((X-X_mean)/S)
+}
+
+
+#fwl queens
+data_fwl_queens_z <- read.csv("J:\\NATALIE\\R\\fwl_queens_z.csv")
+
+mean <- mean(data_fwl_queens_z$fwl)
+sd <- sd(data_fwl_queens_z$fwl)
+
+data_fwl_queens_z$z_score <- calculate_z(data_fwl_queens$fwl, mean, sd)
+
+head(data_fwl_queens_z)
+
+summary(data_fwl_queens_z$z_score)
+
 #########################################################################
 #New code with each species and measurement separate
 
@@ -343,7 +362,6 @@ df_pupal_days_monarchs <- data_summary_pupal_days_monarchs(data, varname ="pupal
                                                  groupnames = c("hostplant", "butterfly_spp"))
 
 #plot pupal days monarchs
-
 p6 <- ggplot(df_pupal_days_monarchs, aes(x=hostplant, y=pupal_days, fill=butterfly_spp)) + 
   geom_bar(stat="identity", position=position_dodge()) +
   geom_errorbar(aes(ymin=pupal_days-sd, ymax=pupal_days+sd), width=.2,
@@ -353,7 +371,7 @@ p6 <- ggplot(df_pupal_days_monarchs, aes(x=hostplant, y=pupal_days, fill=butterf
 data_pupal_mass_queens <- read.csv("J:\\NATALIE\\R\\pupal_mass-queens.csv")
 
 data_summary_pupal_mass_queens <- function(data, varname = "pupal_mass", groupnames = c("hostplant", "butterfly_spp")){
-  require(plyr)
+  require(plyr) 
   summary_func <- function(x, col){
     c(mean = mean(x[[col]], na.rm=TRUE),
       sd = sd(x[[col]], na.rm=TRUE))
