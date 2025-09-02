@@ -219,6 +219,55 @@ head(data_fwl_queens_z)
 
 summary(data_fwl_queens_z$z_score)
 
+#just for fun, anova test
+fwl_queens_aov <- aov(data_fwl_queens$fwl~ data_fwl_queens$hostplant, data = data_fwl_queens)
+summary(fwl_queens_aov)
+
+install.packages("report")
+library(report)
+
+report(fwl_queens_aov)
+
+#Tukey HSD
+
+tukey.test <- TukeyHSD(fwl_queens_aov)
+plot(tukey.test)
+
+#try to plot fwl and ANOVA results
+x <- which(names(data_fwl_queens) == "hostplant") # name of grouping variable
+y <- which(
+  names(data_fwl_queens) == "fwl" # names of variables to test
+)
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("alin", "aang"), c("anyc", "aang"),
+                       c("asubu", "aang"), c("aero", "acur"), c("alin", "acur"), c("anyc", "acur"),
+                       c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"), c("asubu", "alin"),
+                       c("asubu", "anyc")) # comparisons for post-hoc tests
+# Edit until here
+
+
+# Edit at your own risk
+install.packages("ggpubr")
+library(ggpubr)
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_fwl_queens,
+                   x = colnames(data_fwl_queens[j]), y = colnames(data_fwl_queens[i]),
+                   color = colnames(data_fwl_queens[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter"
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_fwl_queens[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+}
+
 #########################################################################
 #New code with each species and measurement separate
 
