@@ -240,10 +240,8 @@ y <- which(
 )
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("alin", "aang"), c("anyc", "aang"),
-                       c("asubu", "aang"), c("aero", "acur"), c("alin", "acur"), c("anyc", "acur"),
-                       c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"), c("asubu", "alin"),
-                       c("asubu", "anyc")) # comparisons for post-hoc tests
+my_comparisons <- list(c("anyc", "aang"), c("asubu", "aang"), c("alin", "aero"), c("anyc", "aero"), c("asubu", "aero")) # comparisons for post-hoc tests
+
 # Edit until here
 
 
