@@ -9,7 +9,13 @@ library(plyr)
 library(dplyr)
 library(lme4)
 library(lmerTest)
+library(report)
+library(car)
+library(ggpubr)
+
+
 #install.packages("lmerTest")
+#install.packages("ggpubr")
 
 
 data <- read.csv("J:\\NATALIE\\adults_test.csv")
@@ -200,26 +206,9 @@ summary(fwl_monarchs)
 larval_days_monarchs <- lmer(larval_days ~ hostplant + sex + (1 | family), data = monarch_data)
 summary(larval_days_monarchs)
 
-###z-scores###
-#function to calculate z score
-calculate_z <- function(X, X_mean, S){
-  return((X-X_mean)/S)
-}
-
-
+###########################ANOVA tests####################################
 #fwl queens
-data_fwl_queens_z <- read.csv("J:\\NATALIE\\R\\fwl_queens_z.csv")
-
-mean <- mean(data_fwl_queens_z$fwl)
-sd <- sd(data_fwl_queens_z$fwl)
-
-data_fwl_queens_z$z_score <- calculate_z(data_fwl_queens$fwl, mean, sd)
-
-head(data_fwl_queens_z)
-
-summary(data_fwl_queens_z$z_score)
-
-#just for fun, anova test
+data_fwl_queens <- read.csv("J:\\NATALIE\\R\\fwl_queens.csv")
 fwl_queens_aov <- aov(data_fwl_queens$fwl~ data_fwl_queens$hostplant, data = data_fwl_queens)
 summary(fwl_queens_aov)
 
@@ -227,6 +216,20 @@ install.packages("report")
 library(report)
 
 report(fwl_queens_aov)
+
+#normality check
+par(mfrow = c(1, 2)) # combine plots
+
+# histogram
+hist(fwl_queens_aov$residuals)
+
+# QQ-plot
+library(car)
+qqPlot(fwl_queens_aov$residuals,
+       id = FALSE # id = FALSE to remove point identification
+)
+
+shapiro.test(fwl_queens_aov$residuals)
 
 #Tukey HSD
 
@@ -240,7 +243,10 @@ y <- which(
 )
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- list(c("anyc", "aang"), c("asubu", "aang"), c("alin", "aero"), c("anyc", "aero"), c("asubu", "aero")) # comparisons for post-hoc tests
+my_comparisons <- list(c("alin", "aang"), c("anyc", "aang"),
+                       c("asubu", "aang"), c("alin", "acur"), c("anyc", "acur"),
+                       c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"),
+                       c("aero", "asubu")) # comparisons for post-hoc tests
 
 # Edit until here
 
@@ -265,6 +271,174 @@ for (i in y) {
     )
   }
 }
+
+#fwl monarchs
+data_fwl_monarchs <- read.csv("J:\\NATALIE\\R\\fwl.csv")
+fwl_monarchs_aov <- aov(data_fwl_monarchs$fwl~ data_fwl_monarchs$hostplant, data = data_fwl_monarchs)
+summary(fwl_monarchs_aov)
+
+report(fwl_monarchs_aov)
+
+#normality check
+par(mfrow = c(1, 2)) # combine plots
+
+# histogram
+hist(fwl_monarchs_aov$residuals)
+
+# QQ-plot
+qqPlot(fwl_monarchs_aov$residuals,
+       id = FALSE # id = FALSE to remove point identification
+)
+
+shapiro.test(fwl_monarchs_aov$residuals)
+
+#Tukey HSD
+
+tukey.test <- TukeyHSD(fwl_monarchs_aov)
+plot(tukey.test)
+
+#try to plot fwl and ANOVA results
+x <- which(names(data_fwl_monarchs) == "hostplant") # name of grouping variable
+y <- which(names(data_fwl_monarchs) == "fwl") # names of variables to test
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("anyc", "aang"),
+                       c("asubu", "aang"), c("aero", "acur"), c("anyc", "acur"),
+                       c("asubu", "acur"), c("anyc", "aero"), c("asubu", "aero"),
+                       c("asubu", "anyc")) # comparisons for post-hoc tests
+
+# Edit until here
+
+
+# Edit at your own risk
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_fwl_monarchs,
+                   x = colnames(data_fwl_monarchs[j]), y = colnames(data_fwl_monarchs[i]),
+                   color = colnames(data_fwl_monarchs[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter"
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+}
+
+# #test with ggstat package, monarch FWL -- can't use this until R is updated
+# install.packages("ggstatplot")
+# library(ggstatsplot)
+# 
+# ggbetweenstats(
+#   data = data_fwl_monarchs,
+#   x = "Hostplant",
+#   y = "D. plexippus forewing length",
+#   type = "parametric", # ANOVA or Kruskal-Wallis
+#   var.equal = TRUE, # ANOVA or Welch ANOVA
+#   plot.type = "box",
+#   pairwise.comparisons = TRUE,
+#   pairwise.display = "significant",
+#   centrality.plotting = FALSE,
+#   bf.message = FALSE
+# )
+
+# ###z-scores###
+# #function to calculate z score
+# calculate_z <- function(X, X_mean, S){
+#   return((X-X_mean)/S)
+# }
+# 
+
+#fwl queens
+# data_fwl_queens_z <- read.csv("J:\\NATALIE\\R\\fwl_queens_z.csv")
+# 
+# mean <- mean(data_fwl_queens_z$fwl)
+# sd <- sd(data_fwl_queens_z$fwl)
+# 
+# data_fwl_queens_z$z_score <- calculate_z(data_fwl_queens$fwl, mean, sd)
+# 
+# head(data_fwl_queens_z)
+# 
+# summary(data_fwl_queens_z$z_score)
+
+# #just for fun, anova test
+# fwl_queens_aov <- aov(data_fwl_queens$fwl~ data_fwl_queens$hostplant, data = data_fwl_queens)
+# summary(fwl_queens_aov)
+# 
+# install.packages("report")
+# library(report)
+# 
+# report(fwl_queens_aov)
+# 
+# #normality check
+# par(mfrow = c(1, 2)) # combine plots
+# 
+# # histogram
+# hist(fwl_queens_aov$residuals)
+# 
+# # QQ-plot
+# library(car)
+# qqPlot(fwl_queens_aov$residuals,
+#        id = FALSE # id = FALSE to remove point identification
+# )
+# 
+# shapiro.test(fwl_queens_aov$residuals)
+# 
+# #Tukey HSD
+# 
+# tukey.test <- TukeyHSD(fwl_queens_aov)
+# plot(tukey.test)
+# 
+# #try to plot fwl and ANOVA results
+# x <- which(names(data_fwl_queens) == "hostplant") # name of grouping variable
+# y <- which(
+#   names(data_fwl_queens) == "fwl" # names of variables to test
+# )
+# method1 <- "anova" # one of "anova" or "kruskal.test"
+# method2 <- "t.test" # one of "wilcox.test" or "t.test"
+# my_comparisons <- list(c("alin", "aang"), c("anyc", "aang"),
+#                        c("asubu", "aang"), c("alin", "acur"), c("anyc", "acur"),
+#                        c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"),
+#                        c("aero", "asubu")) # comparisons for post-hoc tests
+# 
+# # Edit until here
+# 
+# 
+# # Edit at your own risk
+# install.packages("ggpubr")
+# library(ggpubr)
+# for (i in y) {
+#   for (j in x) {
+#     p <- ggboxplot(data_fwl_queens,
+#                    x = colnames(data_fwl_queens[j]), y = colnames(data_fwl_queens[i]),
+#                    color = colnames(data_fwl_queens[j]),
+#                    legend = "none",
+#                    palette = "npg",
+#                    add = "jitter"
+#     )
+#     print(
+#       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+#                              method = method1, label.y = max(data_fwl_queens[, i], na.rm = TRUE)
+#       )
+#       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+#     )
+#   }
+# }
+# 
+# 
+# ###############
+# #all comparisons, for future reference
+# #y_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("alin", "aang"), c("anyc", "aang"),
+#                      # c("asubu", "aang"), c("aero", "acur"), c("alin", "acur"), c("anyc", "acur"),
+#                       # c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"), c("anyc", "alin"),
+#                      # c("asubu", "alin"), c("asubu", "anyc"), c("aero", "asubu")) # comparisons for post-hoc tests
+
+
+
 
 #########################################################################
 #New code with each species and measurement separate
