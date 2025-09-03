@@ -252,8 +252,6 @@ my_comparisons <- list(c("alin", "aang"), c("anyc", "aang"),
 
 
 # Edit at your own risk
-install.packages("ggpubr")
-library(ggpubr)
 for (i in y) {
   for (j in x) {
     p <- ggboxplot(data_fwl_queens,
@@ -261,7 +259,9 @@ for (i in y) {
                    color = colnames(data_fwl_queens[j]),
                    legend = "none",
                    palette = "npg",
-                   add = "jitter"
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. gilippus forewing length (mm)"
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -302,7 +302,7 @@ x <- which(names(data_fwl_monarchs) == "hostplant") # name of grouping variable
 y <- which(names(data_fwl_monarchs) == "fwl") # names of variables to test
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("anyc", "aang"),
+my_comparisons <- list(c("acur", "aang"), c("anyc", "aang"),
                        c("asubu", "aang"), c("aero", "acur"), c("anyc", "acur"),
                        c("asubu", "acur"), c("anyc", "aero"), c("asubu", "aero"),
                        c("asubu", "anyc")) # comparisons for post-hoc tests
@@ -318,16 +318,146 @@ for (i in y) {
                    color = colnames(data_fwl_monarchs[j]),
                    legend = "none",
                    palette = "npg",
-                   add = "jitter"
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. plexippus forewing length (mm)"
+    )
+    print(
+      p + stat_compare_means(comparisons = my_comparisons, label = "p.signif"), method = "t.test", ref.group = ".all.") +
+      stat_compare_means(method = "anova", label.y = 53)
+  }
+}
+#         
+#         
+#         
+#         aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+#                              method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+#       )
+#       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format", label.y = c(37, 38, 39, 53, 53.7, 54.4, 54.7, 55.4, 55.7)) # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+#     )
+#   }
+# }
+
+#larval days queens
+data_larval_days_queens <- read.csv("J:\\NATALIE\\R\\laval_days-queens.csv")
+larval_days_queens_aov <- aov(data_larval_days_queens$larval_days ~ data_larval_days_queens$hostplant, data = data_larval_days_queens)
+summary(larval_days_queens_aov)
+
+report(larval_days_queens_aov)
+
+#normality check
+par(mfrow = c(1, 2)) # combine plots
+
+# histogram
+hist(larval_days_queens_aov$residuals)
+
+# QQ-plot
+qqPlot(larval_days_queens_aov$residuals,
+       id = FALSE # id = FALSE to remove point identification
+)
+
+shapiro.test(larval_days_queens_aov$residuals)
+
+#Tukey HSD
+
+tukey.test <- TukeyHSD(larval_days_queens_aov)
+plot(tukey.test)
+
+#try to plot fwl and ANOVA results
+x <- which(names(data_larval_days_queens) == "hostplant") # name of grouping variable
+y <- which(
+  names(data_larval_days_queens) == "larval_days" # names of variables to test
+)
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- my_comparisons <- list(c("alin", "aang"), c("aero", "acur"), c("alin", "acur"), 
+                                         c("anyc", "acur"), c("asubu", "acur"), c("alin", "aero"), 
+                                         c("anyc", "alin"), c("asubu", "alin")) # comparisons for post-hoc tests
+
+# Edit until here
+
+
+# Edit at your own risk
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_larval_days_queens,
+                   x = colnames(data_larval_days_queens[j]), y = colnames(data_larval_days_queens[i]),
+                   color = colnames(data_larval_days_queens[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. gilippus larval days"
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
-                             method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+                             method = method1, label.y = max(data_larval_days_queens[, i], na.rm = TRUE)
       )
       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
     )
   }
 }
+
+#larval days monarchs
+data_larval_days_monarchs <- read.csv("J:\\NATALIE\\R\\larval_days.csv")
+larval_days_monarchs_aov <- aov(data_larval_days_monarchs$larval_days ~ data_larval_days_monarchs$hostplant, data = data_larval_days_monarchs)
+summary(larval_days_monarchs_aov)
+
+report(larval_days_monarchs_aov)
+
+#normality check
+par(mfrow = c(1, 2)) # combine plots
+
+# histogram
+hist(larval_days_monarchs_aov$residuals)
+
+# QQ-plot
+qqPlot(larval_days_monarchs_aov$residuals,
+       id = FALSE # id = FALSE to remove point identification
+)
+
+shapiro.test(larval_days_monarchs_aov$residuals)
+
+#Tukey HSD
+
+tukey.test <- TukeyHSD(larval_days_monarchs_aov)
+plot(tukey.test)
+
+#try to plot fwl and ANOVA results
+x <- which(names(data_larval_days_monarchs) == "hostplant") # name of grouping variable
+y <- which(names(data_larval_days_monarchs) == "larval_days" # names of variables to test
+)
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- my_comparisons <- list(c("aero", "aang")) # comparisons for post-hoc tests
+# Edit until here
+
+
+# Edit at your own risk
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_larval_days_monarchs,
+                   x = colnames(data_larval_days_monarchs[j]), y = colnames(data_larval_days_monarchs[i]),
+                   color = colnames(data_larval_days_monarchs[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. plexippus larval days"
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_larval_days_monarchs[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+}
+#day 10 mass queens
+
+#pupal days queens
+
+#pupal mass queens
 
 # #test with ggstat package, monarch FWL -- can't use this until R is updated
 # install.packages("ggstatplot")
