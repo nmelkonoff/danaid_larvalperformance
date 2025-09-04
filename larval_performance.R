@@ -212,9 +212,6 @@ data_fwl_queens <- read.csv("J:\\NATALIE\\R\\fwl_queens.csv")
 fwl_queens_aov <- aov(data_fwl_queens$fwl~ data_fwl_queens$hostplant, data = data_fwl_queens)
 summary(fwl_queens_aov)
 
-install.packages("report")
-library(report)
-
 report(fwl_queens_aov)
 
 #normality check
@@ -224,7 +221,6 @@ par(mfrow = c(1, 2)) # combine plots
 hist(fwl_queens_aov$residuals)
 
 # QQ-plot
-library(car)
 qqPlot(fwl_queens_aov$residuals,
        id = FALSE # id = FALSE to remove point identification
 )
@@ -271,6 +267,19 @@ for (i in y) {
     )
   }
 }
+
+#save plot without significance as image
+png(filename = "J:\\NATALIE\\R\\queen-fwl.png")
+ggboxplot(data_fwl_queens,
+          x = colnames(data_fwl_queens[j]), y = colnames(data_fwl_queens[i]),
+          color = colnames(data_fwl_queens[j]),
+          legend = "none",
+          palette = "npg",
+          add = "jitter",
+          xlab = "Hostplant",
+          ylab = "D. gilippus forewing length (mm)")
+dev.off()
+
 
 #fwl monarchs
 data_fwl_monarchs <- read.csv("J:\\NATALIE\\R\\fwl.csv")
