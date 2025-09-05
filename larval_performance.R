@@ -440,7 +440,7 @@ y <- which(names(data_larval_days_monarchs) == "larval_days" # names of variable
 )
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- my_comparisons <- list(c("aero", "aang"), c("asubu", "aang")) # comparisons for post-hoc tests
+my_comparisons <- my_comparisons <- list(c("aero", "aang"), c("asubu", "aang"), c("aang", "anyc")) # comparisons for post-hoc tests
 # Edit until here
 
 
@@ -466,8 +466,6 @@ for (i in y) {
 }
 
 #day 10 mass monarchs
-
-#larval days monarchs
 data_day10_monarchs <- read.csv("J:\\NATALIE\\R\\day10_mass.csv")
 day10_monarchs_aov <- aov(data_day10_monarchs$day10_mass ~ data_day10_monarchs$hostplant, data = data_day10_monarchs)
 summary(day10_monarchs_aov)
@@ -498,10 +496,10 @@ y <- which(names(data_day10_monarchs) == "day10_mass" # names of variables to te
 )
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("alin", "aang"), c("anyc", "aang"),
-                          c("asubu", "aang"), c("aero", "acur"), c("alin", "acur"), c("anyc", "acur"),
-                          c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"), c("anyc", "alin"),
-                          c("asubu", "alin"), c("asubu", "anyc"), c("aero", "asubu")) # comparisons for post-hoc tests
+my_comparisons <- my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("anyc", "aang"),
+                          c("asubu", "aang"), c("aero", "acur"), c("anyc", "acur"),
+                          c("asubu", "acur"), c("anyc", "aero"),
+                          c("asubu", "anyc"), c("aero", "asubu")) # comparisons for post-hoc tests
 # Edit until here
 
 
@@ -525,6 +523,68 @@ for (i in y) {
     )
   }
 }
+
+#day 10 mass queens
+data_day10_queens <- read.csv("J:\\NATALIE\\R\\day10_mass-queens.csv")
+day10_queens_aov <- aov(data_day10_queens$day10_mass ~ data_day10_queens$hostplant, data = data_day10_queens)
+summary(day10_queens_aov)
+
+report(day10_queens_aov)
+
+#normality check
+par(mfrow = c(1, 2)) # combine plots
+
+# histogram
+hist(day10_queens_aov$residuals)
+
+# QQ-plot
+qqPlot(day10_queens_aov$residuals,
+       id = FALSE # id = FALSE to remove point identification
+)
+
+shapiro.test(day10_queens_aov$residuals)
+
+#Tukey HSD
+
+tukey.test <- TukeyHSD(day10_queens_aov)
+plot(tukey.test)
+
+#try to plot fwl and ANOVA results
+x <- which(names(data_day10_queens) == "hostplant") # name of grouping variable
+y <- which(names(data_day10_queens) == "day10_mass" # names of variables to test
+)
+method1 <- "anova" # one of "anova" or "kruskal.test"
+method2 <- "t.test" # one of "wilcox.test" or "t.test"
+my_comparisons <- my_comparisons <- list(c("acur", "aang"), c("aero", "aang"), c("alin", "aang"), c("anyc", "aang"),
+                                        c("asubu", "aang"), c("aero", "acur"), c("alin", "acur"), c("anyc", "acur"),
+                                        c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"), c("anyc", "alin"),
+                                        c("asubu", "alin"), c("asubu", "anyc"), c("aero", "asubu")) # comparisons for post-hoc tests
+
+
+
+# Edit at your own risk
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_day10_queens,
+                   x = colnames(data_day10_queens[j]), y = colnames(data_day10_queens[i]),
+                   color = colnames(data_day10_queens[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. gilippus mass (g)",
+                   order = c("aang", "acur", "aero", "anyc", "asubu", "alin")
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_day10_queens[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+}
+
+
 
 # #test with ggstat package, monarch FWL -- can't use this until R is updated
 # install.packages("ggstatplot")
