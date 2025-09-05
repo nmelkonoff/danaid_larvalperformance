@@ -580,6 +580,8 @@ for (i in y) {
                              method = method1, label.y = max(data_day10_queens[, i], na.rm = TRUE)
       )
       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+      + scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. nyctaginifolia", "A. subulata", "A. linaria"),
+                         guide = guide_axis(n.dodge = 2))
     )
   }
 }
@@ -964,7 +966,7 @@ df_sex_monarchs %>%
 
 
 ###survival###
-data_surv <- read.csv("J:\\NATALIE\\R\\survival_both.csv")
+data_surv <- read.csv("J:\\NATALIE\\R\\survival_both-noalin.csv")
 
 df_survival <- data.frame(data_surv)
 
@@ -973,11 +975,29 @@ df_survival <- data.frame(data_surv)
 #   mutate(survival = case_when(data_surv$died == 0 ~ "alive",
 #                               data_surv$died == 1 ~ "dead"))
 
-p_survival <- ggplot(df_survival, aes(x = hostplant, y = died, fill = butterfly_spp, group = butterfly_spp)) +
+p_survival <- ggplot(df_survival, aes(x = hostplant, y = survived, fill = butterfly_spp, group = butterfly_spp)) +
   geom_bar(stat ="summary", fun.y = "mean", position = "dodge", color = "black") +
-  theme_bw()
+  labs(x = "Hostplant", y = "Proportion surviving larvae", color = "Butterfly Species") +
+  scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. nyctaginifolia", "A. subulata")) +
+  theme(legend.title = "Butterfly Species")
 
+#lmm survival
+survival <- lm(survived ~ hostplant, 
+                  data = data_surv)
+summary(survival)
 
+library(lme4)
 
+#lmm survival monarchs
+data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
+survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family), 
+                           data = data_surv_monarch,
+                           family = binomial())
+summary(survival_monarchs)
+
+install.packages("emmeans")
+library(emmeans)
+
+emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
 
 
