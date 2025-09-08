@@ -978,14 +978,30 @@ df_survival <- data.frame(data_surv)
 p_survival <- ggplot(df_survival, aes(x = hostplant, y = survived, fill = butterfly_spp, group = butterfly_spp)) +
   geom_bar(stat ="summary", fun.y = "mean", position = "dodge", color = "black") +
   labs(x = "Hostplant", y = "Proportion surviving larvae", color = "Butterfly Species") +
-  scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. nyctaginifolia", "A. subulata")) +
-  theme(legend.title = "Butterfly Species")
+  scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. nyctaginifolia", "A. subulata"))
+
+#survival plot just queens
+data_surv_queens <- read.csv("J:\\NATALIE\\R\\survival-queens.csv")
+
+df_survival_queens <- data.frame(data_surv_queens)
+
+p_survival_queens <- ggplot(df_survival_queens, aes(x = hostplant, y = survived)) +
+  geom_bar(stat ="summary", fun.y = "mean", position = "dodge", fill = "lightseagreen", color = "black") +
+  labs(x = "Hostplant", y = "Proportion surviving larvae", color = "Butterfly Species") +
+  scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. linaria", "A. nyctaginifolia", "A. subulata"))
+
+survival_queens <- glmer(survived ~ hostplant + sex + (1 | family), 
+                         data = data_surv_queens,
+                         family = binomial())
+summary(survival_queens)
 
 #lmm survival
-survival <- lm(survived ~ hostplant, 
-                  data = data_surv)
-summary(survival)
+# survival <- glmer(survived ~ hostplant, 
+#                   data = data_surv
+#                   family = binomial)
+# summary(survival)
 
+install.packages("lme4")
 library(lme4)
 
 #lmm survival monarchs
