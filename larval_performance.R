@@ -269,6 +269,47 @@ for (i in y) {
   }
 }
 
+
+#NEW TRY WITH DIFFERENT SIGNIFICANCE NOTATION
+# Edit at your own risk
+for (i in y) {
+  for (j in x) {
+    p <- ggboxplot(data_fwl_queens,
+                   x = colnames(data_fwl_queens[j]), y = colnames(data_fwl_queens[i]),
+                   color = colnames(data_fwl_queens[j]),
+                   legend = "none",
+                   palette = "npg",
+                   add = "jitter",
+                   xlab = "Hostplant",
+                   ylab = "D. gilippus forewing length (mm)",
+                   order = c("aang", "acur", "aero", "anyc", "asubu", "alin")
+    )
+    print(
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_fwl_queens[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.signif", ref.group = ".all") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+      + geom_hline(yintercept = mean(data_fwl_queens$fwl), linetype = 2)
+    )
+  }
+}
+
+#ATTEMPT #2 at different significance notation
+# ggboxplot(data_fwl_queens,
+#           x = colnames(data_fwl_queens[j]), y = colnames(data_fwl_queens[i]),
+#           color = colnames(data_fwl_queens[j]),
+#           legend = "none",
+#           palette = "npg",
+#           add = "jitter",
+#           xlab = "Hostplant",
+#           ylab = "D. gilippus forewing length (mm)",
+#           order = c("aang", "acur", "aero", "anyc", "asubu", "alin") +
+#           rotate_x_text(angle = 45) +
+#           geom_hline(yintercept = mean(data_fwl_queens$fwl), linetype = 2) +
+#           stat_compare_means(method = method1, label.y = 65) + 
+#           stat_compare_means(method = method2, label= "p.signif", ref.group = ".all."))
+#             
+            
 #save plot without significance as image
 png(filename = "J:\\NATALIE\\R\\queen-fwl.png")
 ggboxplot(data_fwl_queens,
@@ -337,16 +378,15 @@ for (i in y) {
       stat_compare_means(method = "anova", label.y = 53)
   }
 }
-#         
-#         
-#         
-#         aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
-#                              method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
-#       )
-#       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format", label.y = c(37, 38, 39, 53, 53.7, 54.4, 54.7, 55.4, 55.7)) # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
-#     )
-#   }
-# }
+
+        aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format", label.y = c(37, 38, 39, 53, 53.7, 54.4, 54.7, 55.4, 55.7)) # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
+  }
+
+
 
 #larval days queens
 data_larval_days_queens <- read.csv("J:\\NATALIE\\R\\laval_days-queens.csv")
