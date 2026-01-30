@@ -258,7 +258,7 @@ for (i in y) {
                    add = "jitter",
                    xlab = "Hostplant",
                    ylab = "D. gilippus forewing length (mm)",
-                   order = c("aang", "acur", "aero", "anyc", "asubu", "alin")
+                   order = c("aang", "acur", "aero", "alin", "anyc", "asubu")
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -353,15 +353,16 @@ x <- which(names(data_fwl_monarchs) == "hostplant") # name of grouping variable
 y <- which(names(data_fwl_monarchs) == "fwl") # names of variables to test
 method1 <- "anova" # one of "anova" or "kruskal.test"
 method2 <- "t.test" # one of "wilcox.test" or "t.test"
-my_comparisons <- list(c("acur", "aang"), c("anyc", "aang"),
-                       c("asubu", "aang"), c("aero", "acur"), c("anyc", "acur"),
-                       c("asubu", "acur"), c("anyc", "aero"), c("asubu", "aero"),
-                       c("asubu", "anyc")) # comparisons for post-hoc tests
+my_comparisons <- list(c("alin", "aang"), c("anyc", "aang"),
+                             c("asubu", "aang"), c("alin", "acur"), c("anyc", "acur"),
+                             c("asubu", "acur"), c("alin", "aero"), c("anyc", "aero"),
+                             c("aero", "asubu"))# comparisons for post-hoc tests
 
 # Edit until here
 
 
-# Edit at your own risk
+#Edit at your own risk
+
 for (i in y) {
   for (j in x) {
     p <- ggboxplot(data_fwl_monarchs,
@@ -371,20 +372,43 @@ for (i in y) {
                    palette = "npg",
                    add = "jitter",
                    xlab = "Hostplant",
-                   ylab = "D. plexippus forewing length (mm)"
+                   ylab = "D. plexippus forewing length (mm)",
+                   order = c("aang", "acur", "aero", "alin", "anyc", "asubu")
     )
     print(
-      p + stat_compare_means(comparisons = my_comparisons, label = "p.signif"), method = "t.test", ref.group = ".all.") +
-      stat_compare_means(method = "anova", label.y = 53)
+      p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+                             method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+      )
+      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format") # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+    )
   }
 }
 
-        aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
-                             method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
-      )
-      + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format", label.y = c(37, 38, 39, 53, 53.7, 54.4, 54.7, 55.4, 55.7)) # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
-    )
-  }
+# New try with different significance notation
+# # Edit at your own risk
+# for (i in y) {
+#   for (j in x) {
+#     p <- ggboxplot(data_fwl_monarchs,
+#                    x = colnames(data_fwl_monarchs[j]), y = colnames(data_fwl_monarchs[i]),
+#                    color = colnames(data_fwl_monarchs[j]),
+#                    legend = "none",
+#                    palette = "npg",
+#                    add = "jitter",
+#                    xlab = "Hostplant",
+#                    ylab = "D. plexippus forewing length (mm)"
+#     )
+#     print(
+#       p + stat_compare_means(comparisons = my_comparisons, label = "p.signif"), method = "t.test", ref.group = ".all.") +
+#       stat_compare_means(method = "anova", label.y = 53)
+#   }
+# }
+# 
+#         aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
+#                              method = method1, label.y = max(data_fwl_monarchs[, i], na.rm = TRUE)
+#       )
+#       + stat_compare_means(comparisons = my_comparisons, method = method2, label = "p.format", label.y = c(37, 38, 39, 53, 53.7, 54.4, 54.7, 55.4, 55.7)) # remove if p-value of ANOVA or Kruskal-Wallis test >= alpha
+#     )
+#   }
 
 
 
@@ -438,7 +462,7 @@ for (i in y) {
                    add = "jitter",
                    xlab = "Hostplant",
                    ylab = "D. gilippus larval days",
-                   order = c("aang", "acur", "aero", "anyc", "asubu", "alin")
+                   order = c("aang", "acur", "aero", "alin", "anyc", "asubu")
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
