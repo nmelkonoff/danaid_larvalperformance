@@ -577,7 +577,8 @@ for (i in y) {
                    palette = "npg",
                    add = "jitter",
                    xlab = "Hostplant",
-                   ylab = "D. plexippus mass (g)"
+                   ylab = "D. plexippus mass (g)",
+                   order = c("aang", "acur", "aero", "alin", "anyc","asubu")
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -637,7 +638,7 @@ for (i in y) {
                    add = "jitter",
                    xlab = "Hostplant",
                    ylab = "D. gilippus mass (g)",
-                   order = c("aang", "acur", "aero", "anyc", "asubu", "alin")
+                   order = c("aang", "acur", "aero", "alin", "anyc","asubu")
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -1068,16 +1069,29 @@ summary(survival_queens)
 install.packages("lme4")
 library(lme4)
 
-#lmm survival monarchs
-data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
-survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family), 
-                           data = data_surv_monarch,
-                           family = binomial())
-summary(survival_monarchs)
+# #lmm survival monarchs
+# data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
+# survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family), 
+#                            data = data_surv_monarch,
+#                            family = binomial())
+# summary(survival_monarchs)
+# 
+# install.packages("emmeans")
+# library(emmeans)
 
-install.packages("emmeans")
-library(emmeans)
+# emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
 
-emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
+#attempt glm for survival for both monarchs and queens
+data_surv_both <- read.csv("J:\\NATALIE\\R\\survival_both.csv")
+survival_both <- glmer(survived ~ hostplant + sex + (1|family),
+                       data = data_surv_both,
+                       family = binomial())
+summary(survival_both)
 
+#graph survival for both species with alin
+df_survival <- data.frame(data_surv_both)
+p_survival <- ggplot(df_survival, aes(x = hostplant, y = survived, fill = butterfly_spp, group = butterfly_spp)) +
+  geom_bar(stat ="summary", fun.y = "mean", position = "dodge", color = "black") +
+  labs(x = "Hostplant", y = "Proportion surviving larvae", color = "Butterfly Species") +
+  scale_x_discrete(label = c("A. angustifolia", "A. curassavica", "A. erosa", "A. linaria", "A. nyctaginifolia", "A. subulata"))
 
