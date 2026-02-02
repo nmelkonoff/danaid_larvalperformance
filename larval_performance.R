@@ -12,10 +12,14 @@ library(lmerTest)
 library(report)
 library(car)
 library(ggpubr)
+library(agricolae)
+library(multcompView)
 
 
 #install.packages("lmerTest")
 #install.packages("ggpubr")
+#install.packages("agricolae")
+#install.packages("multcompView")
 
 
 data <- read.csv("J:\\NATALIE\\adults_test.csv")
@@ -232,6 +236,9 @@ shapiro.test(fwl_queens_aov$residuals)
 tukey.test <- TukeyHSD(fwl_queens_aov)
 plot(tukey.test)
 
+#CLD
+cld <- multcompLetters4(fwl_queens_aov, tukey.test) #generates letters to correspond with hostplants
+
 #try to plot fwl and ANOVA results
 x <- which(names(data_fwl_queens) == "hostplant") # name of grouping variable
 y <- which(
@@ -348,6 +355,9 @@ shapiro.test(fwl_monarchs_aov$residuals)
 tukey.test <- TukeyHSD(fwl_monarchs_aov)
 plot(tukey.test)
 
+#CLD
+cld <- multcompLetters4(fwl_monarchs_aov, tukey.test) #generates letters to correspond with hostplants
+
 #try to plot fwl and ANOVA results
 x <- which(names(data_fwl_monarchs) == "hostplant") # name of grouping variable
 y <- which(names(data_fwl_monarchs) == "fwl") # names of variables to test
@@ -413,7 +423,7 @@ for (i in y) {
 
 
 #larval days queens
-data_larval_days_queens <- read.csv("J:\\NATALIE\\R\\laval_days-queens.csv")
+data_larval_days_queens <- read.csv("J:\\NATALIE\\R\\laval_days_adults-queens.csv")
 larval_days_queens_aov <- aov(data_larval_days_queens$larval_days ~ data_larval_days_queens$hostplant, data = data_larval_days_queens)
 summary(larval_days_queens_aov)
 
@@ -436,6 +446,11 @@ shapiro.test(larval_days_queens_aov$residuals)
 
 tukey.test <- TukeyHSD(larval_days_queens_aov)
 plot(tukey.test)
+
+#CLD
+cld <- multcompLetters4(larval_days_queens_aov, tukey.test) #generates letters to correspond with hostplants
+cld_df <- as.data.frame.list(cld$data_larval_days_queens$hostplant) #stuck here, this isn't working
+
 
 #try to plot fwl and ANOVA results
 x <- which(names(data_larval_days_queens) == "hostplant") # name of grouping variable
@@ -462,7 +477,8 @@ for (i in y) {
                    add = "jitter",
                    xlab = "Hostplant",
                    ylab = "D. gilippus larval days",
-                   order = c("aang", "acur", "aero", "alin", "anyc", "asubu")
+                   order = c("aang", "acur", "aero", "alin", "anyc", "asubu"),
+                   geom_text(data = letters_df, aes(x = larval_days, y = hostplant, label = groups))
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -474,7 +490,7 @@ for (i in y) {
 }
 
 #larval days monarchs
-data_larval_days_monarchs <- read.csv("J:\\NATALIE\\R\\larval_days.csv")
+data_larval_days_monarchs <- read.csv("J:\\NATALIE\\R\\larval_days_adults.csv")
 larval_days_monarchs_aov <- aov(data_larval_days_monarchs$larval_days ~ data_larval_days_monarchs$hostplant, data = data_larval_days_monarchs)
 summary(larval_days_monarchs_aov)
 
@@ -498,6 +514,9 @@ shapiro.test(larval_days_monarchs_aov$residuals)
 tukey.test <- TukeyHSD(larval_days_monarchs_aov)
 plot(tukey.test)
 
+cld <- multcompLetters4(larval_days_monarchs_aov, tukey.test) #generates letters to correspond with hostplants
+cld_df <- as.data.frame.list(cld$data_larval_days_queens$hostplant)
+
 #try to plot fwl and ANOVA results
 x <- which(names(data_larval_days_monarchs) == "hostplant") # name of grouping variable
 y <- which(names(data_larval_days_monarchs) == "larval_days" # names of variables to test
@@ -518,7 +537,8 @@ for (i in y) {
                    palette = "npg",
                    add = "jitter",
                    xlab = "Hostplant",
-                   ylab = "D. plexippus larval days"
+                   ylab = "D. plexippus larval days",
+                   order = c("aang", "acur", "aero", "alin", "anyc","asubu")
     )
     print(
       p + stat_compare_means(aes(label = paste0(after_stat(method), ", p-value = ", after_stat(p.format))),
@@ -553,6 +573,10 @@ shapiro.test(day10_monarchs_aov$residuals)
 
 tukey.test <- TukeyHSD(day10_monarchs_aov)
 plot(tukey.test)
+
+#CLD
+cld <- multcompLetters4(day10_monarchs_aov, tukey.test) #generates letters to correspond with hostplants
+cld_df <- as.data.frame.list(cld$data_larval_days_queens$hostplant)
 
 #try to plot fwl and ANOVA results
 x <- which(names(data_day10_monarchs) == "hostplant") # name of grouping variable
@@ -613,6 +637,9 @@ shapiro.test(day10_queens_aov$residuals)
 
 tukey.test <- TukeyHSD(day10_queens_aov)
 plot(tukey.test)
+
+#CLD
+cld <- multcompLetters4(day10_queens_aov, tukey.test) #generates letters to correspond with hostplants
 
 #try to plot fwl and ANOVA results
 x <- which(names(data_day10_queens) == "hostplant") # name of grouping variable
