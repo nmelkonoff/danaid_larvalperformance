@@ -1096,15 +1096,26 @@ summary(survival_queens)
 install.packages("lme4")
 library(lme4)
 
-# #lmm survival monarchs
-# data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
-# survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family), 
-#                            data = data_surv_monarch,
-#                            family = binomial())
-# summary(survival_monarchs)
-# 
-# install.packages("emmeans")
-# library(emmeans)
+
+#lmm survival queens
+data_surv_queens <- read.csv("J:\\NATALIE\\R\\survival-queens.csv")
+
+survival_queens <- glmer(survived ~ hostplant + sex + (1 | family), 
+                         data = data_surv_queens,
+                         family = binomial())
+summary(survival_queens)
+
+
+#lmm survival monarchs
+data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
+survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family),
+                           data = data_surv_monarch,
+                           family = binomial())
+summary(survival_monarchs)
+
+install.packages("emmeans")
+library(emmeans)
+
 
 # emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
 
