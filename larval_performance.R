@@ -429,6 +429,18 @@ summary(larval_days_queens_aov)
 
 report(larval_days_queens_aov)
 
+#summary stats
+data_larval_days_queens %>%
+  group_by(hostplant) %>%
+  summarise(
+    min_larval_days_q = min(larval_days),
+    max_larval_days_q = max(larval_days),
+    mean_larval_days_q = mean(larval_days),
+    median_larval_days_q = median(larval_days),
+    sd_larval_days_q = sd(larval_days)
+    )
+
+
 #normality check
 par(mfrow = c(1, 2)) # combine plots
 
@@ -495,6 +507,14 @@ larval_days_monarchs_aov <- aov(data_larval_days_monarchs$larval_days ~ data_lar
 summary(larval_days_monarchs_aov)
 
 report(larval_days_monarchs_aov)
+
+#summary stats
+data_larval_days_queens %>%
+  group_by(hostplant) %>%
+  summarise(
+    min_larval_days
+  )
+
 
 #normality check
 par(mfrow = c(1, 2)) # combine plots
@@ -677,6 +697,7 @@ for (i in y) {
     )
   }
 }
+
 
 
 
