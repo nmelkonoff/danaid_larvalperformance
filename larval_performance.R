@@ -14,12 +14,16 @@ library(car)
 library(ggpubr)
 library(agricolae)
 library(multcompView)
+library(plotrix)
+
+detach(package:plyr)
 
 
 #install.packages("lmerTest")
 #install.packages("ggpubr")
 #install.packages("agricolae")
 #install.packages("multcompView")
+#install.packages("plotrix")
 
 
 data <- read.csv("J:\\NATALIE\\adults_test.csv")
@@ -218,6 +222,21 @@ summary(fwl_queens_aov)
 
 report(fwl_queens_aov)
 
+#summary stats
+df_fwl_queens <- data_fwl_queens %>% 
+  group_by(hostplant) %>%
+  summarise(
+    n = n(),
+    min_fwl = min(fwl),
+    max_fwl = max(fwl),
+    mean_fwl = mean(fwl),
+    median_fwl = median(fwl),
+    sd_fwl = sd(fwl),
+    se_fwl = std.error(fwl)
+  )
+
+view(df_fwl_queens)
+
 #normality check
 par(mfrow = c(1, 2)) # combine plots
 
@@ -337,6 +356,21 @@ summary(fwl_monarchs_aov)
 
 report(fwl_monarchs_aov)
 
+#summary data
+df_fwl_monarchs <- data_fwl_monarchs %>% 
+  group_by(hostplant) %>%
+  summarise(
+    n = n(),
+    min_fwl = min(fwl),
+    max_fwl = max(fwl),
+    mean_fwl = mean(fwl),
+    median_fwl = median(fwl),
+    sd_fwl = sd(fwl),
+    se_fwl = std.error(fwl)
+  )
+
+view(df_fwl_monarchs)
+
 #normality check
 par(mfrow = c(1, 2)) # combine plots
 
@@ -430,16 +464,19 @@ summary(larval_days_queens_aov)
 report(larval_days_queens_aov)
 
 #summary stats
-data_larval_days_queens %>%
+df_ld_queens <- data_larval_days_queens %>% 
   group_by(hostplant) %>%
   summarise(
-    min_larval_days_q = min(larval_days),
-    max_larval_days_q = max(larval_days),
-    mean_larval_days_q = mean(larval_days),
-    median_larval_days_q = median(larval_days),
-    sd_larval_days_q = sd(larval_days)
-    )
+      n = n(),
+      min_larval_days_q = min(larval_days),
+      max_larval_days_q = max(larval_days),
+      mean_larval_days_q = mean(larval_days),
+      median_larval_days_q = median(larval_days),
+      sd_larval_days_q = sd(larval_days),
+      se_larval_days_q = std.error(larval_days)
+)
 
+view(df_ld_queens)
 
 #normality check
 par(mfrow = c(1, 2)) # combine plots
@@ -509,11 +546,19 @@ summary(larval_days_monarchs_aov)
 report(larval_days_monarchs_aov)
 
 #summary stats
-data_larval_days_queens %>%
+df_ld_monarchs <- data_larval_days_monarchs %>% 
   group_by(hostplant) %>%
   summarise(
-    min_larval_days
+    n = n(),
+    min_larval_days_q = min(larval_days),
+    max_larval_days_q = max(larval_days),
+    mean_larval_days_q = mean(larval_days),
+    median_larval_days_q = median(larval_days),
+    sd_larval_days_q = sd(larval_days),
+    se_larval_days_q = std.error(larval_days)
   )
+
+view(df_ld_monarchs)
 
 
 #normality check
@@ -569,12 +614,27 @@ for (i in y) {
   }
 }
 
-#day 10 mass monarchs
+#day 10 mass monarchs -- need to fix data files
 data_day10_monarchs <- read.csv("J:\\NATALIE\\R\\day10_mass.csv")
 day10_monarchs_aov <- aov(data_day10_monarchs$day10_mass ~ data_day10_monarchs$hostplant, data = data_day10_monarchs)
 summary(day10_monarchs_aov)
 
 report(day10_monarchs_aov)
+
+#summary stats
+df_mass_monarch <- data_day10_monarchs %>% 
+  group_by(hostplant) %>%
+  summarise(
+    n = n(),
+    min_mass = min(day10_mass),
+    max_mass = max(day10_mass),
+    mean_mass = mean(day10_mass),
+    median_mass = median(day10_mass),
+    sd_mass = sd(day10_mass),
+    se_mass = std.error(day10_mass)
+  )
+
+view(df_mass_monarch)
 
 #normality check
 par(mfrow = c(1, 2)) # combine plots
@@ -639,6 +699,21 @@ day10_queens_aov <- aov(data_day10_queens$day10_mass ~ data_day10_queens$hostpla
 summary(day10_queens_aov)
 
 report(day10_queens_aov)
+
+#summary stats
+df_mass_queens <- data_day10_queens %>% 
+  group_by(hostplant) %>%
+  summarise(
+    n = n(),
+    min_larval_days_q = min(larval_days),
+    max_larval_days_q = max(larval_days),
+    mean_larval_days_q = mean(larval_days),
+    median_larval_days_q = median(larval_days),
+    sd_larval_days_q = sd(larval_days),
+    se_larval_days_q = std.error(larval_days)
+  )
+
+view(df_mass_queens)
 
 #normality check
 par(mfrow = c(1, 2)) # combine plots
