@@ -705,12 +705,12 @@ df_mass_queens <- data_day10_queens %>%
   group_by(hostplant) %>%
   summarise(
     n = n(),
-    min_larval_days_q = min(larval_days),
-    max_larval_days_q = max(larval_days),
-    mean_larval_days_q = mean(larval_days),
-    median_larval_days_q = median(larval_days),
-    sd_larval_days_q = sd(larval_days),
-    se_larval_days_q = std.error(larval_days)
+    min_mass = min(day10_mass),
+    max_mass = max(day10_mass),
+    mean_mass = mean(day10_mass),
+    median_mass = median(day10_mass),
+    sd_mass = sd(day10_mass),
+    se_mass = std.error(day10_mass)
   )
 
 view(df_mass_queens)
