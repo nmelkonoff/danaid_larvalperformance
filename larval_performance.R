@@ -614,7 +614,7 @@ for (i in y) {
   }
 }
 
-#day 10 mass monarchs -- need to fix data files
+#day 10 mass monarchs
 data_day10_monarchs <- read.csv("J:\\NATALIE\\R\\day10_mass.csv")
 day10_monarchs_aov <- aov(data_day10_monarchs$day10_mass ~ data_day10_monarchs$hostplant, data = data_day10_monarchs)
 summary(day10_monarchs_aov)
