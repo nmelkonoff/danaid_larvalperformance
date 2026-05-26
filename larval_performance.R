@@ -1200,18 +1200,31 @@ survival_queens <- glmer(survived ~ hostplant + sex + (1 | family),
                          data = data_surv_queens,
                          family = binomial())
 summary(survival_queens)
+emmeans(survival_queens ~ hostplant | family)
 
 
 #lmm survival monarchs
 data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
-survival_monarchs <- glmer(survived ~ hostplant + sex + (1 | family),
+survival_monarchs <- glm(survived ~ hostplant,
                            data = data_surv_monarch,
-                           family = binomial())
+                           family = binomial(link = "logit"))
 summary(survival_monarchs)
 
 install.packages("emmeans")
 library(emmeans)
 
+survival_monarchs <- glm(survived ~ hostplant + sex,
+                         data = data_surv_monarch,
+                         family = quasibinomial())
+emmeans(survival_monarchs ~ hostplant)
+
+#try out survdiff
+install.packages("survival")
+library(survival)
+
+survdiff(Surv(survived, hostplant))
+
+survdiff(Surv(survived, ))
 
 # emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
 
@@ -1221,6 +1234,10 @@ survival_both <- glmer(survived ~ hostplant + sex + (1|family),
                        data = data_surv_both,
                        family = binomial())
 summary(survival_both)
+emmeans(survival_both ~ hostplant)
+
+#another glm try
+GHQ <- glmer(survivial ~ hostplant + (1 | female), data = sur2, family = binomial(link = "logit"), nAGQ = 25)
 
 #graph survival for both species with alin
 df_survival <- data.frame(data_surv_both)
