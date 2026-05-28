@@ -15,6 +15,7 @@ library(ggpubr)
 library(agricolae)
 library(multcompView)
 library(plotrix)
+library(emmeans)
 
 detach(package:plyr)
 
@@ -24,6 +25,7 @@ detach(package:plyr)
 #install.packages("agricolae")
 #install.packages("multcompView")
 #install.packages("plotrix")
+#install.packages("emmeans")
 
 
 data <- read.csv("J:\\NATALIE\\adults_test.csv")
@@ -1183,61 +1185,20 @@ survival_queens <- glmer(survived ~ hostplant + sex + (1 | family),
                          family = binomial())
 summary(survival_queens)
 
-#lmm survival
-# survival <- glmer(survived ~ hostplant, 
-#                   data = data_surv
-#                   family = binomial)
-# summary(survival)
 
-install.packages("lme4")
-library(lme4)
-
-
-#lmm survival queens
+#glm survival queens
 data_surv_queens <- read.csv("J:\\NATALIE\\R\\survival-queens.csv")
-
-survival_queens <- glmer(survived ~ hostplant + sex + (1 | family), 
-                         data = data_surv_queens,
-                         family = binomial())
+survival_queens <- glm(survived ~ hostplant, family = "binomial", data = data_surv_queens)
 summary(survival_queens)
-emmeans(survival_queens ~ hostplant | family)
+emmeans(survival_queens, "hostplant")
 
 
-#lmm survival monarchs
+#glm survival monarchs
 data_surv_monarch <- read.csv("J:\\NATALIE\\R\\survival.csv")
-survival_monarchs <- glm(survived ~ hostplant,
-                           data = data_surv_monarch,
-                           family = binomial(link = "logit"))
+survival_monarchs <- glm(survived ~ hostplant, family = "binomial", data = data_surv_monarch)
 summary(survival_monarchs)
+emmeans(survival_monarchs, "hostplant")
 
-install.packages("emmeans")
-library(emmeans)
-
-survival_monarchs <- glm(survived ~ hostplant + sex,
-                         data = data_surv_monarch,
-                         family = quasibinomial())
-emmeans(survival_monarchs ~ hostplant)
-
-#try out survdiff
-install.packages("survival")
-library(survival)
-
-survdiff(Surv(survived, hostplant))
-
-survdiff(Surv(survived, ))
-
-# emt1 <- emtrends(survival_monarchs, "survived", var = "hostplant")
-
-#attempt glm for survival for both monarchs and queens
-data_surv_both <- read.csv("J:\\NATALIE\\R\\survival_both.csv")
-survival_both <- glmer(survived ~ hostplant + sex + (1|family),
-                       data = data_surv_both,
-                       family = binomial())
-summary(survival_both)
-emmeans(survival_both ~ hostplant)
-
-#another glm try
-GHQ <- glmer(survivial ~ hostplant + (1 | female), data = sur2, family = binomial(link = "logit"), nAGQ = 25)
 
 #graph survival for both species with alin
 df_survival <- data.frame(data_surv_both)
