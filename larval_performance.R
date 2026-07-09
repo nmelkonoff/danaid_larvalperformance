@@ -658,7 +658,7 @@ plot(tukey.test)
 
 #CLD
 cld <- multcompLetters4(day10_monarchs_aov, tukey.test) #generates letters to correspond with hostplants
-cld_df <- as.data.frame.list(cld$data_larval_days_queens$hostplant)
+cld_df <- as.data.frame.list(cld$data_day10_monarchs$hostplant)
 
 #try to plot fwl and ANOVA results
 x <- which(names(data_day10_monarchs) == "hostplant") # name of grouping variable
